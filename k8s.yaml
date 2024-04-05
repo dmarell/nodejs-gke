@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: gke-autopilot-demo
-          image: eu.gcr.io/dmarell/nodejs-gke-dev-app:2
+          image: eu.gcr.io/<gcpproject>/nodejs-gke-dev-app:2
           env:
           - name: DB_USERNAME
             valueFrom:
@@ -59,7 +59,7 @@ metadata:
   namespace: nodejs-gke-dev
   annotations:
     # Use the following annotation for Google Cloud managed certificate
-    #networking.gke.io/managed-certificates: nodejs-gke.mobisma.com
+    #networking.gke.io/managed-certificates: nodejs-gke.mydomain.com
     kubernetes.io/ingress.class: "gce"
 spec:
   rules:

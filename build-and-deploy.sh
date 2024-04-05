@@ -8,7 +8,7 @@ fi
 envName=dev # TODO hard coded because it's hardcoded in
 appVersion=$2
 
-gcpProject=dmarell
+gcpProject=gcpproject
 appName=nodejs-gke
 namespace=${appName}-${envName}
 
