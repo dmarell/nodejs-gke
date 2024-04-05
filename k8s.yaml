@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gke-autopilot-demo
+  namespace: nodejs-gke-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gke-autopilot-demo
+  template:
+    metadata:
+      labels:
+        app: gke-autopilot-demo
+    spec:
+      containers:
+        - name: gke-autopilot-demo
+          image: eu.gcr.io/dmarell/nodejs-gke-dev-app:2
+          env:
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: dbUser
+                name: appname-secrets
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 30m
+              memory: 30Mi
+            requests:
+              cpu: 30m
+              memory: 30Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gke-autopilot-demo-service
+  namespace: nodejs-gke-dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: gke-autopilot-demo
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gke-autopilot-demo-ingress
+  namespace: nodejs-gke-dev
+  annotations:
+    # Use the following annotation for Google Cloud managed certificate
+    #networking.gke.io/managed-certificates: nodejs-gke.mobisma.com
+    kubernetes.io/ingress.class: "gce"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gke-autopilot-demo-service
+                port:
+                  number: 80
