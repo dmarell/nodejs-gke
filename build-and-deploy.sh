@@ -17,14 +17,9 @@ echo "*** creating namespace if needed: ${namespace}"
 kubectl create ns ${namespace} >& /dev/null && true
 
 echo "*** creating/recreating secrets"
-secretsFile=secrets/env-secrets-${envName}.json
-sh create-secrets-yaml.sh \
-  $(jq -r '.dbHost' $secretsFile | tr -d '\n' | base64) \
-  $(jq -r '.dbName' $secretsFile | tr -d '\n' | base64) \
-  $(jq -r '.dbUser' $secretsFile | tr -d '\n' | base64) \
-  $(jq -r '.dbPass' $secretsFile | tr -d '\n' | base64) \
-> secrets/env-secrets.yaml
-kubectl -n ${namespace} apply -f secrets/env-secrets.yaml
+secretsFile=secrets/${envName}.env
+sh create-secrets-yaml.sh ${secretsFile} next-trading-secrets secrets/secrets.yaml
+kubectl -n ${namespace} apply -f secrets/secrets.yaml
 
 # Build and push images
 appImageTag="eu.gcr.io/${gcpProject}/${appName}-${envName}-app:${appVersion}"
