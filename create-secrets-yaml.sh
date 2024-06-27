@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-if [ "$#" -ne 1 ]; then
+if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <DOTENV_FILE> <SECRET_NAME> <OUTPUT_FILE>"
     exit 1
 fi
